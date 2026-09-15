@@ -1,6 +1,21 @@
 import destinos.*
 import vehiculos.*
 
+
+object jean {
+    const puedeLlamar = true
+    const peso = 65
+
+    method puedeLlamar() {
+        return puedeLlamar
+    }
+
+    // getter
+    method peso() {
+        return peso
+    }
+}
+
 object neo {
     const peso = 0
     var credito = 0
@@ -16,20 +31,6 @@ object neo {
         credito += gigas
     }
 
-    method peso() {
-        return peso
-    }
-}
-
-object jean {
-    const puedeLlamar = true
-    const peso = 65
-
-    method puedeLlamar() {
-        return puedeLlamar
-    }
-
-    // getter
     method peso() {
         return peso
     }

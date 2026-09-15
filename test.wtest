@@ -1,3 +1,4 @@
+import mensajeria.*
 import vehiculos.*
 import destinos.*
 import paquete.*
@@ -54,5 +55,68 @@ describe "casos de envío" {
     sara.setVehiculo(moto)
 
     assert.equals(true, paquete.puedeEntregarse())
+  }
+}
+
+describe "Casos prueba parte 2" {
+  test "Se contrata a un mensajero" {
+    mensajeria.contratarMensajero(sara)
+    assert.equals(1, mensajeria.cantidadEmpleados())
+    assert mensajeria.empleados().contains(sara)
+  }
+
+  test "Si ya esta contratado un empleado no se puede volver a contratar" {
+    mensajeria.contratarMensajero(sara)
+
+    assert.throwsExceptionWithMessage("El mensajero ya esta conntratado", { mensajeria.contratarMensajero(sara) })
+  }
+
+  test "Se despide a un mensajero" {
+    mensajeria.contratarMensajero(sara)
+    assert.equals(1, mensajeria.cantidadEmpleados())
+
+    mensajeria.despedirMensajero(sara)
+    assert.equals(0, mensajeria.cantidadEmpleados())
+  }
+
+  test "Se despide a todos los mensajeros" {
+    mensajeria.contratarMensajero(sara)
+    mensajeria.contratarMensajero(jean)
+    assert.equals(2, mensajeria.cantidadEmpleados())
+
+    mensajeria.despedirATodos()
+    assert.equals(0, mensajeria.cantidadEmpleados())
+  }
+
+  test "La mensajeria es grande" {
+    mensajeria.contratarMensajero(sara)
+    mensajeria.contratarMensajero(neo)
+    mensajeria.contratarMensajero(jean)
+
+    assert.equals(true, mensajeria.esGrande())
+  }
+
+  test "La mensajeria es chica" {
+    mensajeria.contratarMensajero(sara)
+    mensajeria.contratarMensajero(neo)
+
+    assert.equals(false, mensajeria.esGrande())
+  }
+
+  test "Paquete puede ser enviado por el primer empleado" {
+    mensajeria.contratarMensajero(jean)
+    mensajeria.contratarMensajero(neo)
+
+    paquete.pagar()
+    paquete.setDestino(matrix)
+    
+    assert.equals(true, mensajeria.puedeSerEnviadoPorPrimerEmpleado(paquete))
+  }
+
+  test "El peso de Sara es de 50" {
+    mensajeria.contratarMensajero(sara)
+    mensajeria.contratarMensajero(jean)
+
+    assert.equals(65, mensajeria.pesoDelUltimoEmpleado())
   }
 }
