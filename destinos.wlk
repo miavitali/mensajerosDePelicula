@@ -23,6 +23,6 @@ object brooklyn {
     }
 
     method habilitadoAPasar(mensajero) {
-        mensajero.peso() <= 1000
+        return mensajero.peso() <= 1000
     }
 }

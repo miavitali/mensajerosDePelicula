@@ -39,8 +39,8 @@ object paquete {
 		return mensajero
 	}
 
-	
+
 	method puedeEntregarse() {
-		return self.estaPago() and destino.habilitadoAPasar()
+		return self.estaPago() and destino.habilitadoAPasar(self.mensajero())
 	}
 }

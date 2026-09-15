@@ -3,7 +3,7 @@ import vehiculos.*
 
 object neo {
     const peso = 0
-    var credito = 10
+    var credito = 0
 
     method puedeLlamar() {
         credito > 0

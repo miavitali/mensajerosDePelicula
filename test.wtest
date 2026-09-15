@@ -1,13 +1,58 @@
+import vehiculos.*
 import destinos.*
 import paquete.*
+import mensajeros.*
 
 describe "paquete" {
   test "El paquete se entrega en matrix y el envío cuesta 500" {
     paquete.setDestino(matrix)
     assert.equals(500, paquete.precio())
   }
+  test "El paquete se entrega en brooklyn y el envío cuesta 150" {
+    paquete.setDestino(brooklyn)
+    assert.equals(150, paquete.precio())
+  }
   test "El paquete se pagó"{
     paquete.pagar()
     assert.equals(true, paquete.estaPago())
+  }
+}
+
+// Casos de prueba
+describe "casos de envío" {
+  test "El paquete de George que no está pago no puede ser llevado por Neo a la matrix" {
+    paquete.setMensajero(neo)
+    paquete.setDestino(matrix)
+    assert.equals(false, paquete.puedeEntregarse())
+  }
+
+  test "El paquete de George que sí está pago puede ser llevado por Jean a la matrix" {
+    paquete.pagar()
+    paquete.setDestino(matrix)
+    paquete.setMensajero(jean)
+    assert.equals(true, paquete.puedeEntregarse())
+  }
+
+  test "El paquete de George que sí está pago no puede ser llevado por Sara (que pesa 70kg) 
+  a Brooklyn si es que utiliza un camión con un acoplado ." 
+  {
+    paquete.pagar()
+    paquete.setMensajero(sara)
+    sara.setPeso(70)
+    paquete.setDestino(brooklyn)
+    sara.setVehiculo(camion)
+    camion.ponerAcoplado()
+
+    assert.equals(false, paquete.puedeEntregarse())
+  }
+
+  test "La entrega anterior puede hacerse si Sara usa una moto" {
+    paquete.pagar()
+    paquete.setMensajero(sara)
+    sara.setPeso(70)
+    paquete.setDestino(brooklyn)
+    sara.setVehiculo(moto)
+
+    assert.equals(true, paquete.puedeEntregarse())
   }
 }
