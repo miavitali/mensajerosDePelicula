@@ -21,7 +21,7 @@ object neo {
     var credito = 0
 
     method puedeLlamar() {
-        credito > 0
+        return credito > 0
     }
 
     method credito() {
@@ -29,6 +29,9 @@ object neo {
     }
     method sumarCredito(gigas) {
         credito += gigas
+    }
+    method llamar(minutos) {
+        credito -= minutos
     }
 
     method peso() {
@@ -48,7 +51,7 @@ object sara {
     method vehiculo() {
         return vehiculo
     }
-    method setVehiculo(nuevoVehiculo) {
+    method asignarVehiculo(nuevoVehiculo) {
         vehiculo = nuevoVehiculo
     }
 
@@ -57,7 +60,27 @@ object sara {
         return peso + vehiculo.peso()
     }
     //setter
-    method setPeso(nuevoPeso) {
+    method definirPeso(nuevoPeso) {
         peso = nuevoPeso
+    }
+}
+
+object maia {
+    const puedeLlamar = true
+    const peso = 55
+    const vehiculo = moto
+
+
+    method puedeLlamar() {
+        return puedeLlamar
+    }
+
+    // getter
+    method peso() {
+        return peso
+    }
+
+    method vehiculo() {
+        return vehiculo
     }
 }

@@ -1,28 +1,22 @@
-import destinos.*
 import mensajeros.*
+import destinos.*
 
-object paquete {
-	
-	var mensajero = jean
-	var pago = false
-	const costoEnvio = 50
+object paquetito{
+    var mensajero = jean
+    const costoEnvio = 0
+	var pago = true
 	var destino = matrix
 
-	method precioEnvio() {
-		return costoEnvio
-	}
 
-	// setter
-	method pagar() {
-		pago = true
-	}
-	// getter
-	method estaPago() {
-		return pago
-	}
+    method precioEnvio() {
+        return costoEnvio
+    }
+    method estaPago() {
+        return pago
+    }
 
-	// setter
-	method darDestino(nuevoDestino) {
+
+    method darDestino(nuevoDestino) {
 		destino = nuevoDestino
 	}
 	// getter
@@ -39,13 +33,11 @@ object paquete {
 		return mensajero
 	}
 
-
-	method puedeEntregarse() {
+    method puedeEntregarse() {
 		return self.estaPago() and destino.habilitadoAPasar(self.mensajero())
 	}
 
 	method puedeEntregarsePor(esteMensajero) {
 		return self.estaPago() and destino.habilitadoAPasar(esteMensajero)
 	}
-
 }

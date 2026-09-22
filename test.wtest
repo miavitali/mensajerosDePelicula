@@ -3,15 +3,19 @@ import vehiculos.*
 import destinos.*
 import paquete.*
 import mensajeros.*
+import paquetito.*
+import paquetonViajero.*
+import paqueteExtra.*
+
 
 describe "paquete" {
   test "El paquete se entrega en matrix y el envío cuesta 500" {
-    paquete.setDestino(matrix)
-    assert.equals(500, paquete.precio())
+    paquete.darDestino(matrix)
+    assert.equals(500, paquete.precioEnvio())
   }
   test "El paquete se entrega en brooklyn y el envío cuesta 150" {
-    paquete.setDestino(brooklyn)
-    assert.equals(150, paquete.precio())
+    paquete.darDestino(brooklyn)
+    assert.equals(150, paquete.precioEnvio())
   }
   test "El paquete se pagó"{
     paquete.pagar()
@@ -22,15 +26,15 @@ describe "paquete" {
 // Casos de prueba
 describe "casos de envío" {
   test "El paquete de George que no está pago no puede ser llevado por Neo a la matrix" {
-    paquete.setMensajero(neo)
-    paquete.setDestino(matrix)
+    paquete.asignarMensajero(neo)
+    paquete.darDestino(matrix)
     assert.equals(false, paquete.puedeEntregarse())
   }
 
   test "El paquete de George que sí está pago puede ser llevado por Jean a la matrix" {
     paquete.pagar()
-    paquete.setDestino(matrix)
-    paquete.setMensajero(jean)
+    paquete.darDestino(matrix)
+    paquete.asignarMensajero(jean)
     assert.equals(true, paquete.puedeEntregarse())
   }
 
@@ -38,10 +42,10 @@ describe "casos de envío" {
   a Brooklyn si es que utiliza un camión con un acoplado ." 
   {
     paquete.pagar()
-    paquete.setMensajero(sara)
-    sara.setPeso(70)
-    paquete.setDestino(brooklyn)
-    sara.setVehiculo(camion)
+    paquete.asignarMensajero(sara)
+    sara.definirPeso(70)
+    paquete.darDestino(brooklyn)
+    sara.asignarVehiculo(camion)
     camion.ponerAcoplado()
 
     assert.equals(false, paquete.puedeEntregarse())
@@ -49,10 +53,10 @@ describe "casos de envío" {
 
   test "La entrega anterior puede hacerse si Sara usa una moto" {
     paquete.pagar()
-    paquete.setMensajero(sara)
-    sara.setPeso(70)
-    paquete.setDestino(brooklyn)
-    sara.setVehiculo(moto)
+    paquete.asignarMensajero(sara)
+    sara.definirPeso(70)
+    paquete.darDestino(brooklyn)
+    sara.asignarVehiculo(moto)
 
     assert.equals(true, paquete.puedeEntregarse())
   }
@@ -108,7 +112,7 @@ describe "Casos prueba parte 2" {
     mensajeria.contratarMensajero(neo)
 
     paquete.pagar()
-    paquete.setDestino(matrix)
+    paquete.darDestino(matrix)
     
     assert.equals(true, mensajeria.puedeSerEnviadoPorPrimerEmpleado(paquete))
   }
@@ -119,4 +123,76 @@ describe "Casos prueba parte 2" {
 
     assert.equals(65, mensajeria.pesoDelUltimoEmpleado())
   }
+}
+
+describe "Casos de prueba parte 3" {
+  test "La mensajería puede entregar un paquete (al menos un mensajero puede)" {
+    paquete.pagar()
+    paquete.darDestino(matrix)
+
+    assert.that(mensajeria.puedeEntregar(paquete))
+  }
+  test "Obtiene los mensajeros que pueden entregar el paquete" {
+      paquete.pagar()
+      paquete.darDestino(brooklyn) // acepta si el peso es menor a 1000
+      sara.asignarVehiculo(camion)
+      camion.ponerAcoplado()
+      camion.ponerAcoplado()
+
+      // Entran Neo y Jean pero no Sara porque va con camión + 2 acoplados
+      assert.equals([jean, neo], mensajeria.losQuePuedenEnviar(paquete))
+  }
+  test "La mensajeria tiene sobrepeso" {
+    sara.definirPeso(500)
+    sara.asignarVehiculo(camion)
+    camion.ponerAcoplado()
+    assert.that(mensajeria.tieneSobrepeso())
+  }
+  test "La empresa envía un paquete" {
+    paquete.pagar()
+    paquete.darDestino(matrix)
+
+    mensajeria.enviar(paquete)
+    assert.that([neo, jean].contains(paquete.mensajero()))
+    assert.equals(0, mensajeria.pendientes().size())
+  }
+  test "La empresa no puede enviar el paquete por falta de pago y lo agrega a su lista de pendientes" {
+    paquetonViajero.agregarDestino(brooklyn)
+
+    mensajeria.enviar(paquetonViajero)
+    assert.that(mensajeria.pendientes().contains(paquetonViajero))
+  }
+  test "Conocer facturación de empresa" {
+    paquete.pagar() // vale 50
+    paquetonViajero.agregarDestino(matrix)
+    paquetonViajero.agregarDestino(brooklyn)
+    paquetonViajero.pagarEnvio(200)  // 100 por cada destino
+
+    mensajeria.enviarPaquetes([paquete, paquetonViajero])
+    assert.equals(250, mensajeria.facturacion())
+  }
+  test "Dado un conjunto de paquetes, enviarlos a todos" {
+    paquete.pagar() // vale 50
+    paquetonViajero.agregarDestino(matrix)
+    paquetonViajero.pagarEnvio(100)  // 100 por cada destino
+
+    mensajeria.enviarPaquetes([paquete, paquetonViajero])
+    assert.equals(150, mensajeria.facturacion())
+    assert.equals(0, mensajeria.pendientes().size())
+  }
+  test "Encontrar el paquete pendiente más caro y enviarlo" {
+    // Los agrega a pendientes
+    mensajeria.enviarPaquetes([paquete,paqueteExtra]) // 50+150
+    assert.equals(2, mensajeria.pendientes().size())
+    assert.equals(paqueteExtra, mensajeria.pendienteMasCaro())
+
+    // Los paga y envia el más caro
+    paquete.pagar()
+    paqueteExtra.pagar()
+    mensajeria.enviarElMasCaro()
+
+    assert.equals(150, mensajeria.facturacion())
+    assert.equals([paquete], mensajeria.pendientes())
+  }
+    
 }

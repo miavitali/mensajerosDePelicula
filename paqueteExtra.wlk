@@ -1,11 +1,11 @@
 import destinos.*
 import mensajeros.*
 
-object paquete {
+object paqueteExtra {
 	
-	var mensajero = jean
+	var mensajero = neo
 	var pago = false
-	const costoEnvio = 50
+	const costoEnvio = 150
 	var destino = matrix
 
 	method precioEnvio() {
